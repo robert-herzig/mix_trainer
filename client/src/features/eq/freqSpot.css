@@ -1,0 +1,186 @@
+.freq-spot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.75rem;
+}
+
+.freq-spot__main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.freq-spot__spectrum-card,
+.freq-spot__monitor-card,
+.freq-spot__info {
+  background: rgba(6, 11, 25, 0.85);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 25px 60px rgba(2, 6, 23, 0.65);
+}
+
+.freq-spot__spectrum-card header h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.4rem;
+  color: #f8fafc;
+}
+
+.freq-spot__spectrum-card header p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.freq-spot__spectrum {
+  position: relative;
+  width: 100%;
+  min-height: 260px;
+  margin: 1rem 0;
+  cursor: crosshair;
+}
+
+.freq-spot__spectrum svg {
+  width: 100%;
+  height: 260px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.freq-spot__spectrum-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  pointer-events: none;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.freq-spot__guess-window {
+  fill: rgba(56, 189, 248, 0.15);
+  stroke: rgba(56, 189, 248, 0.45);
+  stroke-width: 0.4;
+}
+
+.freq-spot__target-line {
+  stroke: rgba(251, 113, 133, 0.9);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  filter: drop-shadow(0 0 10px rgba(251, 113, 133, 0.65));
+}
+
+.freq-spot__spectrum-card footer p {
+  margin: 0;
+  color: rgba(203, 213, 225, 0.8);
+  font-size: 0.9rem;
+}
+
+.freq-spot__monitor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.freq-spot__transport button.is-active,
+.freq-spot__actions button.is-active {
+  border-color: rgba(125, 211, 252, 0.85);
+  background: linear-gradient(120deg, rgba(99, 102, 241, 0.55), rgba(59, 130, 246, 0.6));
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.35);
+}
+
+.freq-spot__status {
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.freq-spot__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.freq-spot__info h4 {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.freq-spot__info p {
+  margin: 0.35rem 0;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.freq-spot__result {
+  font-size: 1.65rem;
+  margin: 0;
+}
+
+.freq-spot__attempts {
+  margin: 0.2rem 0 0.4rem;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.freq-spot__result--hit {
+  color: #86efac;
+}
+
+.freq-spot__result--miss {
+  color: #fca5a5;
+}
+
+.freq-spot__actions button,
+.freq-spot__monitor-card button,
+.freq-spot__info button {
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.8);
+  color: #f7fbff;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.freq-spot__actions button:hover,
+.freq-spot__monitor-card button:hover,
+.freq-spot__info button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(125, 211, 252, 0.65);
+  box-shadow: 0 15px 30px rgba(125, 211, 252, 0.25);
+}
+
+.freq-spot__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+@media (max-width: 1100px) {
+  .freq-spot {
+    grid-template-columns: 1fr;
+  }
+
+  .freq-spot__sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .freq-spot__info {
+    flex: 1 1 280px;
+  }
+}
+
+@media (max-width: 720px) {
+  .freq-spot__spectrum svg {
+    height: 220px;
+  }
+
+  .freq-spot__transport {
+    grid-template-columns: 1fr;
+  }
+}

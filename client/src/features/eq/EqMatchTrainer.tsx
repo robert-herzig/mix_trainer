@@ -4,7 +4,9 @@ import { useEqEngine } from './hooks/useEqEngine'
 import type { FilterSettings, FilterShape } from './types'
 import './eqMatch.css'
 
-const AUDIO_URL = '/audio/reference.wav'
+type EqMatchTrainerProps = {
+  audioUrl: string
+}
 const MIN_FREQ = 20
 const MAX_FREQ = 20000
 const MIN_GAIN = -12
@@ -93,7 +95,7 @@ const computeMatchScore = (target: FilterSettings, user: FilterSettings) => {
   return Math.max(0, Math.round(100 - penalty))
 }
 
-export const EqMatchTrainer = () => {
+export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
   const [targetFilter, setTargetFilter] = useState<FilterSettings>(() => randomizeFilter())
   const [userFilter, setUserFilter] = useState<FilterSettings>({
     type: 'peaking',
@@ -106,7 +108,7 @@ export const EqMatchTrainer = () => {
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
 
   const { status, isPlaying, isLooping, monitorMode, monitor, setLooping, restartPlayback, stopPlayback } =
-    useEqEngine(AUDIO_URL, targetFilter, userFilter)
+    useEqEngine(audioUrl, targetFilter, userFilter)
 
   const targetCurve = useMemo(() => buildCurve(targetFilter), [targetFilter])
   const userCurve = useMemo(() => buildCurve(userFilter), [userFilter])

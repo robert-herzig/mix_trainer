@@ -1,13 +1,23 @@
 import { useMemo, useState } from 'react'
 import { EqMatchTrainer } from './features/eq/EqMatchTrainer'
+import { FreqSpotTrainer } from './features/eq/FreqSpotTrainer'
 import './App.css'
 
-type TabId = 'eq' | 'compression' | 'loudness'
+type TabId = 'eq' | 'freqspot' | 'compression' | 'loudness'
+
+const audioOptions = [
+  { value: '/audio/reference.wav', label: 'Rock guitar riff' },
+  { value: '/audio/growl.wav', label: 'Growl vocal loop' },
+]
 
 const placeholderCopy: Record<TabId, { title: string; body: string }> = {
   eq: {
     title: 'EQ Match Lab',
     body: 'Shape filters by ear, match the hidden curve, and learn faster than in static quiz apps.',
+  },
+  freqspot: {
+    title: 'Freq Spotter',
+    body: 'Identify boosted bands by ear. (You are already in this module.)',
   },
   compression: {
     title: 'Compression Gym (soon)',
@@ -21,10 +31,12 @@ const placeholderCopy: Record<TabId, { title: string; body: string }> = {
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('eq')
+  const [audioSource, setAudioSource] = useState<string>(audioOptions[0].value)
 
   const tabList = useMemo(
     () => [
       { id: 'eq' as TabId, label: 'EQ Match' },
+      { id: 'freqspot' as TabId, label: 'Freq Spot' },
       { id: 'compression' as TabId, label: 'Compression' },
       { id: 'loudness' as TabId, label: 'dB Delta' },
     ],
@@ -32,7 +44,8 @@ function App() {
   )
 
   const renderPanel = () => {
-    if (activeTab === 'eq') return <EqMatchTrainer />
+    if (activeTab === 'eq') return <EqMatchTrainer audioUrl={audioSource} />
+    if (activeTab === 'freqspot') return <FreqSpotTrainer audioUrl={audioSource} />
 
     const copy = placeholderCopy[activeTab]
     return (
@@ -72,6 +85,21 @@ function App() {
           </button>
         ))}
       </nav>
+
+      <div className="app-audio-selector">
+        <label htmlFor="audioSelect">Reference audio</label>
+        <select
+          id="audioSelect"
+          value={audioSource}
+          onChange={(event) => setAudioSource(event.target.value)}
+        >
+          {audioOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <section className="app-panel" aria-live="polite">
         {renderPanel()}
