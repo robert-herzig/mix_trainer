@@ -101,6 +101,12 @@
   gap: 1rem;
 }
 
+.freq-spot__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .freq-spot__info h4 {
   margin: 0 0 0.5rem;
   text-transform: uppercase;

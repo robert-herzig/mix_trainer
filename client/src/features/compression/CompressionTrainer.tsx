@@ -127,7 +127,7 @@ export const CompressionTrainer = ({ audioUrl }: CompressionTrainerProps) => {
         <div className="comp-trainer__curve-card">
           <header>
             <h3>Compression curve match</h3>
-            <p>Match the hidden envelope by ear. Pink shows the target GR curve, cyan is yours.</p>
+            <p>Match the hidden envelope by ear. Green shows the target GR curve, black is yours.</p>
           </header>
           <div className="comp-trainer__curve">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none">

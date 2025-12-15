@@ -50,13 +50,12 @@ function App() {
           <p className="eyebrow">Mix Trainer</p>
           <h1>Train your mastering instincts by ear</h1>
           <p className="lede">
-            Inspired by SoundGym sessions but tuned for daily deep practice. Start with EQ curve matching and
+            Train your ear for mixing/mastering - start with EQ curve matching and
             extend into compression timing and loudness perception.
           </p>
         </div>
-        <div className="hero-chip">
-          <span>v0.1 prototype</span>
-          <span>React · Web Audio</span>
+        <div className="hero-logo">
+          <img src="/raven_transp_bg.png" alt="Mix Trainer raven logo" />
         </div>
       </header>
 

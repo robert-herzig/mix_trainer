@@ -176,14 +176,14 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
           <div className="eq-match__legend">
             <div className="eq-match__legend-item">
               <span className="eq-match__legend-swatch eq-match__legend-swatch--target" />
-              {targetVisible ? 'Target curve (pink)' : 'Target hidden · tap “Show Target” or hit 90%+'}
+              {targetVisible ? 'Target curve (green)' : 'Target hidden · tap “Show Target” or hit 90%+'}
             </div>
             <div className="eq-match__legend-item">
-              <span className="eq-match__legend-swatch eq-match__legend-swatch--user" /> Your EQ (cyan dashed)
+              <span className="eq-match__legend-swatch eq-match__legend-swatch--user" /> Your EQ (black dashed)
             </div>
           </div>
           <div className="eq-match__hint">
-            Pink appears once you reveal the target (or after a successful match). Cyan always shows your current filter.
+            Green appears once you reveal the target (or after a successful match). Black always shows your current filter.
             Click the spectrum to drop/drag your bell and refine with the knobs.
           </div>
         </div>
@@ -243,7 +243,7 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
           <div className="eq-match__monitor">
             <div className="eq-match__monitor-header">
               <p>Monitor feed</p>
-              <span>{monitorMode === 'target' ? 'Target curve (pink)' : 'Your EQ (cyan)'}</span>
+              <span>{monitorMode === 'target' ? 'Target curve (green)' : 'Your EQ (black)'}</span>
             </div>
             <div className="eq-match__monitor-buttons">
               <button
@@ -331,7 +331,7 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
         {isSuccessVisible && (
           <div className="eq-match__success">
             <h4>Great ears!</h4>
-            <p>You nailed the curve with a {score}% match. Preview the pink line to analyze what you heard.</p>
+            <p>You nailed the curve with a {score}% match. Preview the green line to analyze what you heard.</p>
             <div className="eq-match__success-actions">
               <button type="button" onClick={() => setIsSuccessVisible(false)}>
                 Keep tweaking
