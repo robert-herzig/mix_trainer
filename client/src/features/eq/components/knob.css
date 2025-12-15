@@ -4,24 +4,25 @@
   align-items: center;
   gap: 0.25rem;
   min-width: 90px;
-  color: #f5f5f2;
+  color: var(--color-text);
 }
 
 .knob__dial {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  background: radial-gradient(circle at 30% 30%, #343842, #1d212c 60%);
+  border: 2px solid var(--color-neutral);
+  background: radial-gradient(circle at 30% 30%, #ffffff, #e5e7eb 65%);
   position: relative;
   cursor: grab;
-  box-shadow: inset 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 20px rgba(77, 122, 255, 0.15);
-  transition: border-color 160ms ease;
+  box-shadow: inset 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .knob__dial:active {
   cursor: grabbing;
-  border-color: rgba(126, 159, 255, 0.85);
+  border-color: var(--color-accent);
+  box-shadow: inset 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .knob__dial__indicator {
@@ -30,7 +31,7 @@
   height: 26px;
   top: 10px;
   left: calc(50% - 2px);
-  background: linear-gradient(180deg, #8bd5ff, #4a8bff);
+  background: var(--color-accent);
   border-radius: 2px;
   transform-origin: center 28px;
   transition: transform 80ms ease-out;
@@ -40,11 +41,11 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(244, 245, 250, 0.78);
+  color: var(--color-muted);
 }
 
 .knob__value {
   font-size: 1rem;
   font-variant-numeric: tabular-nums;
-  color: #fefefe;
+  color: var(--color-text);
 }

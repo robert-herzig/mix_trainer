@@ -84,7 +84,6 @@ export const CompressionTrainer = ({ audioUrl }: CompressionTrainerProps) => {
   const [showTargetDetails, setShowTargetDetails] = useState(false)
   const [showScore, setShowScore] = useState(false)
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
-  const [hasAutoStarted, setHasAutoStarted] = useState(false)
 
   const {
     status,
@@ -108,25 +107,12 @@ export const CompressionTrainer = ({ audioUrl }: CompressionTrainerProps) => {
     }
   }, [isSuccessVisible, score])
 
-  useEffect(() => {
-    setHasAutoStarted(false)
-  }, [audioUrl, targetSettings])
-
-  useEffect(() => {
-    if (status === 'ready' && !hasAutoStarted) {
-      setHasAutoStarted(true)
-      restartPlayback()
-    }
-  }, [hasAutoStarted, restartPlayback, status])
-
   const handleRandomize = () => {
-    stopPlayback()
     setTargetSettings(randomCompressionSettings())
     setUserSettings({ ...defaultUserSettings })
     setShowTargetDetails(false)
     setShowScore(false)
     setIsSuccessVisible(false)
-    setHasAutoStarted(false)
   }
 
   const statusLabel = useMemo(() => {
@@ -147,8 +133,8 @@ export const CompressionTrainer = ({ audioUrl }: CompressionTrainerProps) => {
             <svg viewBox="0 0 100 100" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="compBg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#0f172a" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="#010514" stopOpacity="0.85" />
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#e5e7eb" stopOpacity="0.95" />
                 </linearGradient>
               </defs>
               <rect x="0" y="0" width="100" height="100" fill="url(#compBg)" rx="8" />

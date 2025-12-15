@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { useEqEngine } from './hooks/useEqEngine'
 import type { FilterSettings } from './types'
@@ -44,7 +44,6 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
   const [hardMode, setHardMode] = useState(false)
   const [attempts, setAttempts] = useState(0)
-  const [hasAutoStarted, setHasAutoStarted] = useState(false)
 
   const windowOct = hardMode ? BASE_WINDOW_OCT : BASE_WINDOW_OCT * EASY_WINDOW_MULTIPLIER
   const windowPercent = useMemo(() => (Math.pow(2, windowOct) - 1) * 100, [windowOct])
@@ -64,17 +63,6 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
     }
   }, [guessFrequency, windowOct])
 
-  useEffect(() => {
-    setHasAutoStarted(false)
-  }, [audioUrl])
-
-  useEffect(() => {
-    if (status === 'ready' && !hasAutoStarted) {
-      setHasAutoStarted(true)
-      restartPlayback()
-    }
-  }, [hasAutoStarted, restartPlayback, status])
-
   const handleSpectrumClick = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
       const rect = event.currentTarget.getBoundingClientRect()
@@ -92,13 +80,11 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
   )
 
   const randomizeBoost = () => {
-    stopPlayback()
     setTargetFilter(randomBoostFilter())
     setGuessFrequency(null)
     setResult('pending')
     setIsSuccessVisible(false)
     setAttempts(0)
-    setHasAutoStarted(false)
   }
 
   const statusLabel = {
@@ -119,8 +105,8 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
             <svg viewBox="0 0 100 100" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="freqSpotBg" x1="0%" x2="0%" y1="0%" y2="100%">
-                  <stop offset="0%" stopColor="#0f172a" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="#020617" stopOpacity="0.85" />
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#e5e7eb" stopOpacity="0.95" />
                 </linearGradient>
               </defs>
               <rect x="0" y="0" width="100" height="100" fill="url(#freqSpotBg)" rx="10" />

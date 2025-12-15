@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useGainCompareEngine } from './hooks/useGainCompareEngine'
 import './loudness.css'
 
@@ -55,7 +55,6 @@ export const DbDeltaTrainer = ({ audioUrl }: DbDeltaTrainerProps) => {
   const [selected, setSelected] = useState<number | null>(null)
   const [attempts, setAttempts] = useState(0)
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
-  const [hasAutoStarted, setHasAutoStarted] = useState(false)
 
   const isCorrect = selected === challenge.delta
   const hasAnswered = selected !== null
@@ -77,17 +76,6 @@ export const DbDeltaTrainer = ({ audioUrl }: DbDeltaTrainerProps) => {
     return 'Toggle between reference and gain-changed playback, then guess the dB delta.'
   }, [status])
 
-  useEffect(() => {
-    setHasAutoStarted(false)
-  }, [audioUrl, challenge.delta])
-
-  useEffect(() => {
-    if (status === 'ready' && !hasAutoStarted) {
-      setHasAutoStarted(true)
-      restartPlayback()
-    }
-  }, [hasAutoStarted, restartPlayback, status])
-
   const handleSelect = (value: number) => {
     if (status !== 'ready') return
     setSelected(value)
@@ -96,12 +84,10 @@ export const DbDeltaTrainer = ({ audioUrl }: DbDeltaTrainerProps) => {
   }
 
   const handleNewChallenge = () => {
-    stopPlayback()
     setChallenge(buildChallenge())
     setSelected(null)
     setAttempts(0)
     setIsSuccessVisible(false)
-    setHasAutoStarted(false)
   }
 
   return (

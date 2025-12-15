@@ -11,6 +11,7 @@ const audioOptions = [
   { value: '/audio/reference.wav', label: 'Rock guitar riff' },
   { value: '/audio/growl.wav', label: 'Growl vocal loop' },
   { value: '/audio/drumbeat.wav', label: 'Drum beat loop' },
+  { value: '/audio/femvox.wav', label: 'Female vox hook' },
 ]
 
 function App() {

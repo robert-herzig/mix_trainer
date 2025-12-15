@@ -106,7 +106,6 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
   const [showTarget, setShowTarget] = useState(false)
   const [showScore, setShowScore] = useState(false)
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
-  const [hasAutoStarted, setHasAutoStarted] = useState(false)
 
   const { status, isPlaying, isLooping, monitorMode, monitor, setLooping, restartPlayback, stopPlayback } =
     useEqEngine(audioUrl, targetFilter, userFilter)
@@ -124,17 +123,6 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
     }
   }, [isSuccessVisible, score])
 
-  useEffect(() => {
-    setHasAutoStarted(false)
-  }, [audioUrl])
-
-  useEffect(() => {
-    if (status === 'ready' && !hasAutoStarted) {
-      setHasAutoStarted(true)
-      restartPlayback()
-    }
-  }, [hasAutoStarted, restartPlayback, status])
-
   const handleSpectrumClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
     const ratioX = clamp((event.clientX - rect.left) / rect.width, 0, 1)
@@ -150,12 +138,10 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
   }
 
   const handleRandomize = () => {
-    stopPlayback()
     setShowTarget(false)
     setShowScore(false)
     setIsSuccessVisible(false)
     setTargetFilter(randomizeFilter())
-    setHasAutoStarted(false)
   }
 
   const statusLabel = {
@@ -172,8 +158,8 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
             <svg viewBox="0 0 100 100" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="spectrumBg" x1="0%" x2="0%" y1="0%" y2="100%">
-                  <stop offset="0%" stopColor="#111827" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="#020617" stopOpacity="0.85" />
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#e5e7eb" stopOpacity="0.95" />
                 </linearGradient>
               </defs>
               <rect x="0" y="0" width="100" height="100" fill="url(#spectrumBg)" rx="6" />

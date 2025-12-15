@@ -12,22 +12,23 @@
 
 .db-trainer__card,
 .db-trainer__monitor-card {
-  background: rgba(6, 10, 24, 0.9);
-  border: 1px solid rgba(99, 102, 241, 0.18);
+  background: var(--color-secondary);
+  border: 1px solid var(--color-neutral);
   border-radius: 20px;
   padding: 1.5rem;
-  box-shadow: 0 25px 60px rgba(2, 6, 23, 0.65);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.05);
+  color: var(--color-text);
 }
 
 .db-trainer__card header h3 {
   margin: 0 0 0.3rem;
   font-size: 1.5rem;
-  color: #f8fafc;
+  color: var(--color-text);
 }
 
 .db-trainer__card header p {
   margin: 0;
-  color: rgba(226, 232, 240, 0.8);
+  color: var(--color-muted);
 }
 
 .db-trainer__options {
@@ -40,40 +41,39 @@
 .db-trainer__option {
   padding: 0.85rem 1rem;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(15, 23, 42, 0.65);
-  color: #f8fafc;
+  border: 1px solid var(--color-neutral);
+  background: var(--color-secondary);
+  color: var(--color-text);
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
 }
 
 .db-trainer__option:hover:not(:disabled) {
   transform: translateY(-2px);
-  border-color: rgba(125, 211, 252, 0.65);
-  box-shadow: 0 12px 30px rgba(125, 211, 252, 0.25);
+  border-color: var(--color-accent);
 }
 
 .db-trainer__option.is-selected {
-  border-color: rgba(147, 197, 253, 0.9);
+  border-color: var(--color-primary);
 }
 
 .db-trainer__option.is-correct {
-  border-color: rgba(74, 222, 128, 0.8);
-  background: linear-gradient(140deg, rgba(74, 222, 128, 0.2), rgba(21, 128, 61, 0.2));
+  border-color: var(--color-accent);
+  background: rgba(34, 197, 94, 0.12);
 }
 
 .db-trainer__option.is-incorrect {
-  border-color: rgba(248, 113, 113, 0.7);
-  background: linear-gradient(140deg, rgba(248, 113, 113, 0.25), rgba(185, 28, 28, 0.15));
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
 }
 
 .db-trainer__feedback {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--color-neutral);
   padding-top: 1rem;
-  color: rgba(226, 232, 240, 0.85);
+  color: var(--color-text);
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -84,11 +84,11 @@
 }
 
 .db-trainer__feedback .is-correct {
-  color: #86efac;
+  color: var(--color-accent);
 }
 
 .db-trainer__feedback .is-incorrect {
-  color: #fca5a5;
+  color: #ef4444;
 }
 
 .db-trainer__monitor-card {
@@ -98,14 +98,14 @@
 }
 
 .db-trainer__transport button.is-active {
-  border-color: rgba(125, 211, 252, 0.85);
-  background: linear-gradient(120deg, rgba(99, 102, 241, 0.55), rgba(59, 130, 246, 0.6));
-  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.35);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text);
 }
 
 .db-trainer__status {
   font-size: 0.85rem;
-  color: rgba(226, 232, 240, 0.75);
+  color: var(--color-muted);
 }
 
 .db-trainer__sidebar {
@@ -116,20 +116,21 @@
 
 .db-trainer__new {
   padding: 0.8rem 1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(15, 23, 42, 0.85);
-  color: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-secondary);
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
 }
 
 .db-trainer__new:hover {
   transform: translateY(-2px);
-  border-color: rgba(125, 211, 252, 0.65);
-  box-shadow: 0 12px 30px rgba(125, 211, 252, 0.25);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text);
 }
 
 @media (max-width: 1100px) {
