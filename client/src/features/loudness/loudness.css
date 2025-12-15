@@ -1,0 +1,149 @@
+.db-trainer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.75rem;
+}
+
+.db-trainer__main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.db-trainer__card,
+.db-trainer__monitor-card {
+  background: rgba(6, 10, 24, 0.9);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 25px 60px rgba(2, 6, 23, 0.65);
+}
+
+.db-trainer__card header h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1.5rem;
+  color: #f8fafc;
+}
+
+.db-trainer__card header p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.8);
+}
+
+.db-trainer__options {
+  margin: 1.25rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+}
+
+.db-trainer__option {
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.65);
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.db-trainer__option:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(125, 211, 252, 0.65);
+  box-shadow: 0 12px 30px rgba(125, 211, 252, 0.25);
+}
+
+.db-trainer__option.is-selected {
+  border-color: rgba(147, 197, 253, 0.9);
+}
+
+.db-trainer__option.is-correct {
+  border-color: rgba(74, 222, 128, 0.8);
+  background: linear-gradient(140deg, rgba(74, 222, 128, 0.2), rgba(21, 128, 61, 0.2));
+}
+
+.db-trainer__option.is-incorrect {
+  border-color: rgba(248, 113, 113, 0.7);
+  background: linear-gradient(140deg, rgba(248, 113, 113, 0.25), rgba(185, 28, 28, 0.15));
+}
+
+.db-trainer__feedback {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1rem;
+  color: rgba(226, 232, 240, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.db-trainer__feedback p {
+  margin: 0;
+}
+
+.db-trainer__feedback .is-correct {
+  color: #86efac;
+}
+
+.db-trainer__feedback .is-incorrect {
+  color: #fca5a5;
+}
+
+.db-trainer__monitor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.db-trainer__transport button.is-active {
+  border-color: rgba(125, 211, 252, 0.85);
+  background: linear-gradient(120deg, rgba(99, 102, 241, 0.55), rgba(59, 130, 246, 0.6));
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.35);
+}
+
+.db-trainer__status {
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.db-trainer__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.db-trainer__new {
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.db-trainer__new:hover {
+  transform: translateY(-2px);
+  border-color: rgba(125, 211, 252, 0.65);
+  box-shadow: 0 12px 30px rgba(125, 211, 252, 0.25);
+}
+
+@media (max-width: 1100px) {
+  .db-trainer {
+    grid-template-columns: 1fr;
+  }
+
+  .db-trainer__sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .db-trainer__new,
+  .eq-match__success {
+    flex: 1 1 280px;
+  }
+}

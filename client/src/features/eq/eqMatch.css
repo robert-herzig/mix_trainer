@@ -145,6 +145,12 @@
   gap: 0.85rem;
 }
 
+.eq-match__transport-start {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
 .eq-match__transport button,
 .eq-match__actions button {
   padding: 0.85rem 1rem;
@@ -168,6 +174,21 @@
   transform: translateY(-2px);
   border-color: rgba(125, 211, 252, 0.65);
   box-shadow: 0 15px 30px rgba(125, 211, 252, 0.25);
+}
+
+.loop-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.loop-toggle input {
+  width: 16px;
+  height: 16px;
 }
 
 .eq-match__transport button.is-active,

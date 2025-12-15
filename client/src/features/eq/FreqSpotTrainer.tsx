@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { useEqEngine } from './hooks/useEqEngine'
 import type { FilterSettings } from './types'
@@ -44,6 +44,7 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
   const [hardMode, setHardMode] = useState(false)
   const [attempts, setAttempts] = useState(0)
+  const [hasAutoStarted, setHasAutoStarted] = useState(false)
 
   const windowOct = hardMode ? BASE_WINDOW_OCT : BASE_WINDOW_OCT * EASY_WINDOW_MULTIPLIER
   const windowPercent = useMemo(() => (Math.pow(2, windowOct) - 1) * 100, [windowOct])
@@ -62,6 +63,17 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
       upper: frequencyToRatio(upperFreq),
     }
   }, [guessFrequency, windowOct])
+
+  useEffect(() => {
+    setHasAutoStarted(false)
+  }, [audioUrl])
+
+  useEffect(() => {
+    if (status === 'ready' && !hasAutoStarted) {
+      setHasAutoStarted(true)
+      restartPlayback()
+    }
+  }, [hasAutoStarted, restartPlayback, status])
 
   const handleSpectrumClick = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
@@ -86,9 +98,7 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
     setResult('pending')
     setIsSuccessVisible(false)
     setAttempts(0)
-    if (isPlaying) {
-      restartPlayback()
-    }
+    setHasAutoStarted(false)
   }
 
   const statusLabel = {
@@ -173,16 +183,15 @@ export const FreqSpotTrainer = ({ audioUrl }: FreqSpotTrainerProps) => {
           </div>
 
           <div className="eq-match__transport freq-spot__transport">
-            <button type="button" onClick={restartPlayback} disabled={status !== 'ready'}>
-              {isPlaying ? 'Restart playback' : 'Start playback'}
-            </button>
-            <button
-              type="button"
-              className={isLooping ? 'is-active' : ''}
-              onClick={() => setLooping(!isLooping)}
-            >
-              Loop {isLooping ? 'on' : 'off'}
-            </button>
+            <div className="eq-match__transport-start">
+              <button type="button" onClick={restartPlayback} disabled={status !== 'ready'}>
+                {isPlaying ? 'Restart playback' : 'Start playback'}
+              </button>
+              <label className="loop-toggle">
+                <input type="checkbox" checked={isLooping} onChange={(e) => setLooping(e.target.checked)} />
+                Loop
+              </label>
+            </div>
             <button type="button" onClick={stopPlayback}>
               Stop
             </button>

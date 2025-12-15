@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { EqMatchTrainer } from './features/eq/EqMatchTrainer'
 import { FreqSpotTrainer } from './features/eq/FreqSpotTrainer'
+import { CompressionTrainer } from './features/compression/CompressionTrainer'
+import { DbDeltaTrainer } from './features/loudness/DbDeltaTrainer'
 import './App.css'
 
 type TabId = 'eq' | 'freqspot' | 'compression' | 'loudness'
@@ -8,26 +10,8 @@ type TabId = 'eq' | 'freqspot' | 'compression' | 'loudness'
 const audioOptions = [
   { value: '/audio/reference.wav', label: 'Rock guitar riff' },
   { value: '/audio/growl.wav', label: 'Growl vocal loop' },
+  { value: '/audio/drumbeat.wav', label: 'Drum beat loop' },
 ]
-
-const placeholderCopy: Record<TabId, { title: string; body: string }> = {
-  eq: {
-    title: 'EQ Match Lab',
-    body: 'Shape filters by ear, match the hidden curve, and learn faster than in static quiz apps.',
-  },
-  freqspot: {
-    title: 'Freq Spotter',
-    body: 'Identify boosted bands by ear. (You are already in this module.)',
-  },
-  compression: {
-    title: 'Compression Gym (soon)',
-    body: 'Dial in attack, release, and ratio on a hidden setting. We will record how fast you land at the right feel.',
-  },
-  loudness: {
-    title: 'ΔdB Estimator (soon)',
-    body: 'Test your ability to notice subtle gain changes with calibrated level jumps and scoring.',
-  },
-}
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('eq')
@@ -44,16 +28,18 @@ function App() {
   )
 
   const renderPanel = () => {
-    if (activeTab === 'eq') return <EqMatchTrainer audioUrl={audioSource} />
-    if (activeTab === 'freqspot') return <FreqSpotTrainer audioUrl={audioSource} />
-
-    const copy = placeholderCopy[activeTab]
-    return (
-      <div className="placeholder">
-        <h3>{copy.title}</h3>
-        <p>{copy.body}</p>
-      </div>
-    )
+    switch (activeTab) {
+      case 'eq':
+        return <EqMatchTrainer audioUrl={audioSource} />
+      case 'freqspot':
+        return <FreqSpotTrainer audioUrl={audioSource} />
+      case 'compression':
+        return <CompressionTrainer audioUrl={audioSource} />
+      case 'loudness':
+        return <DbDeltaTrainer audioUrl={audioSource} />
+      default:
+        return null
+    }
   }
 
   return (

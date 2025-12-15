@@ -1,60 +1,51 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { FilterSettings } from '../types'
+import type { CompressionSettings } from '../types'
 
+export type CompressionMonitorMode = 'target' | 'user'
 type EngineStatus = 'loading' | 'ready' | 'error'
-export type MonitorMode = 'target' | 'user'
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 const MIX_FADE = 0.015
 
-const applyFilterSettings = (filter: BiquadFilterNode, settings: FilterSettings) => {
-  filter.frequency.value = clamp(settings.frequency, 20, 20000)
-  filter.Q.value = clamp(settings.q, 0.1, 18)
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+const dbToGain = (db: number) => Math.pow(10, db / 20)
 
-  switch (settings.type) {
-    case 'highpass':
-      filter.type = 'highpass'
-      filter.gain.value = 0
-      break
-    case 'lowpass':
-      filter.type = 'lowpass'
-      filter.gain.value = 0
-      break
-    default:
-      filter.type = 'peaking'
-      filter.gain.value = clamp(settings.gain, -24, 24)
-  }
+const applyCompressorSettings = (node: DynamicsCompressorNode, settings: CompressionSettings) => {
+  node.threshold.value = clamp(settings.threshold, -100, 0)
+  node.ratio.value = clamp(settings.ratio, 1, 20)
+  node.attack.value = clamp(settings.attack / 1000, 0.001, 1)
+  node.release.value = clamp(settings.release / 1000, 0.01, 1)
 }
 
-export const useEqEngine = (
+const applyMakeup = (gainNode: GainNode | null, makeup: number, isActive: boolean) => {
+  if (!gainNode) return
+  const base = dbToGain(clamp(makeup, -24, 24))
+  gainNode.gain.value = isActive ? base : 0
+}
+
+export const useCompressorEngine = (
   audioUrl: string,
-  targetFilter: FilterSettings,
-  userFilter: FilterSettings,
+  targetSettings: CompressionSettings,
+  userSettings: CompressionSettings,
 ) => {
   const audioContextRef = useRef<AudioContext | null>(null)
   const bufferRef = useRef<AudioBuffer | null>(null)
-  const targetRef = useRef(targetFilter)
-  const userRef = useRef(userFilter)
-  const monitorModeRef = useRef<MonitorMode>('target')
+  const targetRef = useRef(targetSettings)
+  const userRef = useRef(userSettings)
+  const monitorModeRef = useRef<CompressionMonitorMode>('target')
   const isLoopingRef = useRef(true)
+
   const nodesRef = useRef<{
     source: AudioBufferSourceNode | null
-    targetFilter: BiquadFilterNode | null
-    userFilter: BiquadFilterNode | null
+    targetComp: DynamicsCompressorNode | null
+    userComp: DynamicsCompressorNode | null
     targetGain: GainNode | null
     userGain: GainNode | null
-  }>({
-    source: null,
-    targetFilter: null,
-    userFilter: null,
-    targetGain: null,
-    userGain: null,
-  })
+  }>({ source: null, targetComp: null, userComp: null, targetGain: null, userGain: null })
 
   const [status, setStatus] = useState<EngineStatus>('loading')
   const [isPlaying, setIsPlaying] = useState(false)
-  const [monitorMode, setMonitorMode] = useState<MonitorMode>('target')
   const [isLooping, setIsLooping] = useState(true)
+  const [monitorMode, setMonitorMode] = useState<CompressionMonitorMode>('target')
 
   const ensureContext = useCallback(() => {
     if (!audioContextRef.current) {
@@ -64,51 +55,47 @@ export const useEqEngine = (
   }, [])
 
   const stopPlayback = useCallback(() => {
-    const { source, targetFilter: targetNode, userFilter: userNode, targetGain, userGain } = nodesRef.current
+    const { source, targetComp, userComp, targetGain, userGain } = nodesRef.current
 
     if (source) {
       source.onended = null
       try {
         source.stop()
       } catch (error) {
-        // Source may already be stopped, ignore.
+        // source might already be stopped
       }
       source.disconnect()
     }
 
-    targetNode?.disconnect()
-    userNode?.disconnect()
+    targetComp?.disconnect()
+    userComp?.disconnect()
     targetGain?.disconnect()
     userGain?.disconnect()
 
-    nodesRef.current = {
-      source: null,
-      targetFilter: null,
-      userFilter: null,
-      targetGain: null,
-      userGain: null,
-    }
+    nodesRef.current = { source: null, targetComp: null, userComp: null, targetGain: null, userGain: null }
     setIsPlaying(false)
   }, [])
 
   useEffect(() => {
-    targetRef.current = targetFilter
-    if (nodesRef.current.targetFilter) {
-      applyFilterSettings(nodesRef.current.targetFilter, targetFilter)
+    targetRef.current = targetSettings
+    if (nodesRef.current.targetComp) {
+      applyCompressorSettings(nodesRef.current.targetComp, targetSettings)
     }
-  }, [targetFilter])
+    applyMakeup(nodesRef.current.targetGain, targetSettings.makeup, monitorModeRef.current === 'target')
+  }, [targetSettings])
 
   useEffect(() => {
-    userRef.current = userFilter
-    if (nodesRef.current.userFilter) {
-      applyFilterSettings(nodesRef.current.userFilter, userFilter)
+    userRef.current = userSettings
+    if (nodesRef.current.userComp) {
+      applyCompressorSettings(nodesRef.current.userComp, userSettings)
     }
-  }, [userFilter])
+    applyMakeup(nodesRef.current.userGain, userSettings.makeup, monitorModeRef.current === 'user')
+  }, [userSettings])
 
   useEffect(() => {
     let cancelled = false
 
-    const loadAudio = async () => {
+    const loadBuffer = async () => {
       if (typeof window === 'undefined' || typeof AudioContext === 'undefined') {
         setStatus('error')
         return
@@ -132,7 +119,7 @@ export const useEqEngine = (
       }
     }
 
-    loadAudio()
+    loadBuffer()
 
     return () => {
       cancelled = true
@@ -155,44 +142,32 @@ export const useEqEngine = (
     source.buffer = buffer
     source.loop = isLoopingRef.current
 
-    const targetNode = context.createBiquadFilter()
-    const userNode = context.createBiquadFilter()
-    applyFilterSettings(targetNode, targetRef.current)
-    applyFilterSettings(userNode, userRef.current)
+    const targetComp = context.createDynamicsCompressor()
+    const userComp = context.createDynamicsCompressor()
+    applyCompressorSettings(targetComp, targetRef.current)
+    applyCompressorSettings(userComp, userRef.current)
 
     const targetGain = context.createGain()
     const userGain = context.createGain()
-    targetGain.gain.value = monitorModeRef.current === 'target' ? 1 : 0
-    userGain.gain.value = monitorModeRef.current === 'user' ? 1 : 0
+    applyMakeup(targetGain, targetRef.current.makeup, monitorModeRef.current === 'target')
+    applyMakeup(userGain, userRef.current.makeup, monitorModeRef.current === 'user')
 
-    source.connect(targetNode).connect(targetGain).connect(context.destination)
-    source.connect(userNode).connect(userGain).connect(context.destination)
+    source.connect(targetComp).connect(targetGain).connect(context.destination)
+    source.connect(userComp).connect(userGain).connect(context.destination)
 
-    nodesRef.current = {
-      source,
-      targetFilter: targetNode,
-      userFilter: userNode,
-      targetGain,
-      userGain,
-    }
+    nodesRef.current = { source, targetComp, userComp, targetGain, userGain }
 
     source.start()
     setIsPlaying(true)
 
     source.onended = () => {
-      nodesRef.current = {
-        source: null,
-        targetFilter: null,
-        userFilter: null,
-        targetGain: null,
-        userGain: null,
-      }
+      nodesRef.current = { source: null, targetComp: null, userComp: null, targetGain: null, userGain: null }
       setIsPlaying(false)
     }
   }, [ensureContext, stopPlayback])
 
   const monitor = useCallback(
-    async (mode: MonitorMode) => {
+    async (mode: CompressionMonitorMode) => {
       if (status !== 'ready') return
       monitorModeRef.current = mode
       setMonitorMode(mode)
@@ -203,8 +178,10 @@ export const useEqEngine = (
         const now = context.currentTime
         targetGain.gain.cancelScheduledValues(now)
         userGain.gain.cancelScheduledValues(now)
-        targetGain.gain.setTargetAtTime(mode === 'target' ? 1 : 0, now, MIX_FADE)
-        userGain.gain.setTargetAtTime(mode === 'user' ? 1 : 0, now, MIX_FADE)
+        const targetLevel = dbToGain(targetRef.current.makeup)
+        const userLevel = dbToGain(userRef.current.makeup)
+        targetGain.gain.setTargetAtTime(mode === 'target' ? targetLevel : 0, now, MIX_FADE)
+        userGain.gain.setTargetAtTime(mode === 'user' ? userLevel : 0, now, MIX_FADE)
         return
       }
 

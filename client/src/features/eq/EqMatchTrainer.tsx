@@ -106,6 +106,7 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
   const [showTarget, setShowTarget] = useState(false)
   const [showScore, setShowScore] = useState(false)
   const [isSuccessVisible, setIsSuccessVisible] = useState(false)
+  const [hasAutoStarted, setHasAutoStarted] = useState(false)
 
   const { status, isPlaying, isLooping, monitorMode, monitor, setLooping, restartPlayback, stopPlayback } =
     useEqEngine(audioUrl, targetFilter, userFilter)
@@ -122,6 +123,17 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
       setShowScore(true)
     }
   }, [isSuccessVisible, score])
+
+  useEffect(() => {
+    setHasAutoStarted(false)
+  }, [audioUrl])
+
+  useEffect(() => {
+    if (status === 'ready' && !hasAutoStarted) {
+      setHasAutoStarted(true)
+      restartPlayback()
+    }
+  }, [hasAutoStarted, restartPlayback, status])
 
   const handleSpectrumClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -143,9 +155,7 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
     setShowScore(false)
     setIsSuccessVisible(false)
     setTargetFilter(randomizeFilter())
-    if (isPlaying) {
-      restartPlayback()
-    }
+    setHasAutoStarted(false)
   }
 
   const statusLabel = {
@@ -274,16 +284,19 @@ export const EqMatchTrainer = ({ audioUrl }: EqMatchTrainerProps) => {
           </div>
 
           <div className="eq-match__transport">
-            <button type="button" onClick={restartPlayback} disabled={status !== 'ready'}>
-              {isPlaying ? 'Restart playback' : 'Start playback'}
-            </button>
-            <button
-              type="button"
-              className={isLooping ? 'is-active' : ''}
-              onClick={() => setLooping(!isLooping)}
-            >
-              Loop {isLooping ? 'on' : 'off'}
-            </button>
+            <div className="eq-match__transport-start">
+              <button type="button" onClick={restartPlayback} disabled={status !== 'ready'}>
+                {isPlaying ? 'Restart playback' : 'Start playback'}
+              </button>
+              <label className="loop-toggle">
+                <input
+                  type="checkbox"
+                  checked={isLooping}
+                  onChange={(event) => setLooping(event.target.checked)}
+                />
+                Loop
+              </label>
+            </div>
             <button type="button" onClick={stopPlayback}>
               Stop
             </button>
