@@ -7,11 +7,13 @@ import './App.css'
 
 type TabId = 'eq' | 'freqspot' | 'compression' | 'loudness'
 
+const buildAssetPath = (relativePath: string) => `${import.meta.env.BASE_URL}${relativePath}`
+
 const audioOptions = [
-  { value: '/audio/reference.wav', label: 'Rock guitar riff' },
-  { value: '/audio/growl.wav', label: 'Growl vocal loop' },
-  { value: '/audio/drumbeat.wav', label: 'Drum beat loop' },
-  { value: '/audio/femvox.wav', label: 'Female vox hook' },
+  { value: buildAssetPath('audio/reference.wav'), label: 'Rock guitar riff' },
+  { value: buildAssetPath('audio/growl.wav'), label: 'Growl vocal loop' },
+  { value: buildAssetPath('audio/drumbeat.wav'), label: 'Drum beat loop' },
+  { value: buildAssetPath('audio/femvox.wav'), label: 'Female vox hook' },
 ]
 
 function App() {
@@ -55,7 +57,7 @@ function App() {
           </p>
         </div>
         <div className="hero-logo">
-          <img src="/raven_transp_bg.png" alt="Mix Trainer raven logo" />
+          <img src={buildAssetPath('raven_transp_bg.png')} alt="Mix Trainer raven logo" />
         </div>
       </header>
 
