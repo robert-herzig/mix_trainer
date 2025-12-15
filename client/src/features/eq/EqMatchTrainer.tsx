@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Knob } from './components/Knob'
 import { useEqEngine } from './hooks/useEqEngine'
 import type { FilterSettings, FilterShape } from './types'
@@ -101,7 +101,9 @@ export const EqMatchTrainer = () => {
     gain: 0,
     q: 1.2,
   })
-  const [showAnswer, setShowAnswer] = useState(false)
+  const [showTarget, setShowTarget] = useState(false)
+  const [showScore, setShowScore] = useState(false)
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false)
 
   const { status, isPlaying, isLooping, monitorMode, monitor, setLooping, restartPlayback, stopPlayback } =
     useEqEngine(AUDIO_URL, targetFilter, userFilter)
@@ -109,6 +111,15 @@ export const EqMatchTrainer = () => {
   const targetCurve = useMemo(() => buildCurve(targetFilter), [targetFilter])
   const userCurve = useMemo(() => buildCurve(userFilter), [userFilter])
   const score = useMemo(() => computeMatchScore(targetFilter, userFilter), [targetFilter, userFilter])
+  const targetVisible = showTarget || isSuccessVisible
+
+  useEffect(() => {
+    if (score >= 90 && !isSuccessVisible) {
+      setIsSuccessVisible(true)
+      setShowTarget(true)
+      setShowScore(true)
+    }
+  }, [isSuccessVisible, score])
 
   const handleSpectrumClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -126,7 +137,9 @@ export const EqMatchTrainer = () => {
 
   const handleRandomize = () => {
     stopPlayback()
-    setShowAnswer(false)
+    setShowTarget(false)
+    setShowScore(false)
+    setIsSuccessVisible(false)
     setTargetFilter(randomizeFilter())
     if (isPlaying) {
       restartPlayback()
@@ -152,7 +165,7 @@ export const EqMatchTrainer = () => {
                 </linearGradient>
               </defs>
               <rect x="0" y="0" width="100" height="100" fill="url(#spectrumBg)" rx="6" />
-              <polyline className="eq-curve eq-curve--target" points={targetCurve} />
+              {targetVisible && <polyline className="eq-curve eq-curve--target" points={targetCurve} />}
               <polyline className="eq-curve eq-curve--user" points={userCurve} />
             </svg>
             <div className="eq-match__spectrum-overlay">
@@ -164,15 +177,16 @@ export const EqMatchTrainer = () => {
           </div>
           <div className="eq-match__legend">
             <div className="eq-match__legend-item">
-              <span className="eq-match__legend-swatch eq-match__legend-swatch--target" /> Target curve (pink)
+              <span className="eq-match__legend-swatch eq-match__legend-swatch--target" />
+              {targetVisible ? 'Target curve (pink)' : 'Target hidden · tap “Show Target” or hit 90%+'}
             </div>
             <div className="eq-match__legend-item">
               <span className="eq-match__legend-swatch eq-match__legend-swatch--user" /> Your EQ (cyan dashed)
             </div>
           </div>
           <div className="eq-match__hint">
-            Pink shows the randomized target, cyan is your current filter. Click the spectrum to drop/drag your bell and
-            refine with the knobs.
+            Pink appears once you reveal the target (or after a successful match). Cyan always shows your current filter.
+            Click the spectrum to drop/drag your bell and refine with the knobs.
           </div>
         </div>
 
@@ -277,22 +291,31 @@ export const EqMatchTrainer = () => {
       </div>
 
       <aside className="eq-match__sidebar">
-        <div className="eq-match__score-card">
+        <div className={`eq-match__score-card ${showScore ? '' : 'is-hidden'}`}>
           <p>Match Score</p>
-          <strong>{score}%</strong>
-          <span>{isPlaying ? 'Listening… switch feeds on the fly.' : 'Adjust until you hit 90%+'}</span>
+          <strong>{showScore ? `${score}%` : '???'}</strong>
+          <span>
+            {showScore
+              ? isPlaying
+                ? 'Listening… switch feeds on the fly.'
+                : 'Adjust until you hit 90%+'
+              : 'Score hidden. Enable easy mode to see your %.'}
+          </span>
         </div>
 
         <div className="eq-match__actions">
           <button type="button" onClick={handleRandomize}>
             Randomize challenge
           </button>
-          <button type="button" onClick={() => setShowAnswer((prev) => !prev)}>
-            {showAnswer ? 'Hide breakdown' : 'Reveal target'}
+          <button type="button" onClick={() => setShowTarget(true)} disabled={targetVisible}>
+            Show target
+          </button>
+          <button type="button" onClick={() => setShowScore((prev) => !prev)}>
+            {showScore ? 'Hide score' : 'Show score (easy mode)'}
           </button>
         </div>
 
-        {showAnswer && (
+        {targetVisible && (
           <div className="eq-match__answer">
             <h4>Current Target</h4>
             <ul>
@@ -301,6 +324,21 @@ export const EqMatchTrainer = () => {
               {targetFilter.type === 'peaking' && <li>Gain: {targetFilter.gain.toFixed(1)} dB</li>}
               <li>Q: {targetFilter.q.toFixed(2)}</li>
             </ul>
+          </div>
+        )}
+
+        {isSuccessVisible && (
+          <div className="eq-match__success">
+            <h4>Great ears!</h4>
+            <p>You nailed the curve with a {score}% match. Preview the pink line to analyze what you heard.</p>
+            <div className="eq-match__success-actions">
+              <button type="button" onClick={() => setIsSuccessVisible(false)}>
+                Keep tweaking
+              </button>
+              <button type="button" onClick={handleRandomize}>
+                New challenge
+              </button>
+            </div>
           </div>
         )}
       </aside>
